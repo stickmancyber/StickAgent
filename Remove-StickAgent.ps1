@@ -23,12 +23,12 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 if ($Transcript) { Start-Transcript -Path $TranscriptPath -Append }
 
 function Uninstall-StickAgent {
-    Write-Host "Searching for StickAgent…" -ForegroundColor Cyan
+    Write-Host "Searching for StickAgent..." -ForegroundColor Cyan
 
     $agent = Get-CimInstance -ClassName Win32_Product ` -Filter "Name LIKE 'StickContr%'"
 
     if ($agent) {
-        Write-Host "Uninstalling Stick Agent $($agent.Version)…" -ForegroundColor Cyan
+        Write-Host "Uninstalling Stick Agent $($agent.Version)..." -ForegroundColor Cyan
         try {
             $result = Invoke-CimMethod -InputObject $agent -MethodName Uninstall
             switch ($result.ReturnValue) {
@@ -44,7 +44,7 @@ function Uninstall-StickAgent {
 
     $leftover = 'C:\Program Files (x86)\StickAgent'
     if (Test-Path $leftover) {
-        Write-Host "Removing leftover directory $leftover…" -ForegroundColor Cyan
+        Write-Host "Removing leftover directory $leftover..." -ForegroundColor Cyan
         Remove-Item $leftover -Recurse -Force
     }
 }
