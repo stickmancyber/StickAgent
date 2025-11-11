@@ -49,9 +49,33 @@ function Uninstall-StickAgent {
     }
 }
 
+function Remove-StickAgentTask {
+    $TaskName = "restartStickController"
+    $TaskPath = "\StickAgent\"
+    Write-Host "Searching for Scheduled Task..."
+
+    try {
+        $Task = Get-ScheduledTask -TaskName $TaskName -TaskPath $TaskPath -ErrorAction Stop
+        if ($Task) {
+            Write-Host "Found Scheduled task '$TaskName' in '$TaskPath'."
+            
+            Write-Host "Removing the scheduled task..."
+            
+            $Task | Unregister-ScheduledTask -Confirm:$false
+            
+            Write-Host "Task '$TaskName' has been removed."
+        }
+    }
+    catch {
+        Write-Host "Scheduled task '$TaskName' not found in path '$TaskPath'."
+    }
+}
+
+
 # -- MAIN ----------------------------------------------------------------
 try {
     Uninstall-StickAgent
+    Remove-StickAgentTask
     Write-Host "`nCleanup completed successfully." -ForegroundColor Green
 } finally {
     if ($Transcript) { Stop-Transcript }
