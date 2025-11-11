@@ -1,4 +1,4 @@
-<#  
+ <#  
 .SYNOPSIS
     Uninstalls the Stick Agent.
     • Developed By StickmanCyber - Nayan Bhattarai
@@ -11,7 +11,7 @@
 [CmdletBinding()]
 param(
     [switch]$Transcript,
-    [string]$TranscriptPath = "$env:TEMP\StickAgent_uninstall_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    [string]$TranscriptPath = "$env:TEMP\sysmon_uninstall_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
 )
 
 # -- Privilege check -----------------------------------------------------
@@ -48,9 +48,12 @@ function Uninstall-StickAgent {
         Remove-Item $leftover -Recurse -Force
     }
 }
+
+# -- MAIN ----------------------------------------------------------------
 try {
     Uninstall-StickAgent
     Write-Host "`nCleanup completed successfully." -ForegroundColor Green
 } finally {
     if ($Transcript) { Stop-Transcript }
-}
+} 
+
