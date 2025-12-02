@@ -1,6 +1,6 @@
-<#  
+ <#  
 .SYNOPSIS
-    Uninstalls Stick Agent.
+    Uninstalls Sysmon/Sysmon64 and the Wazuh Agent.
     • Developed By StickmanCyber - Nayan Bhattarai
 
 .NOTES
@@ -11,9 +11,10 @@
 [CmdletBinding()]
 param(
     [switch]$Transcript,
-    [string]$TranscriptPath = "$env:TEMP\sitckagent_uninstall$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    [string]$TranscriptPath = "$env:TEMP\sysmon_uninstall_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
 )
 
+# -- Privilege check -----------------------------------------------------
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
         ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Error "This script must be run from an elevated prompt."
@@ -22,7 +23,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 if ($Transcript) { Start-Transcript -Path $TranscriptPath -Append }
 
 
-function stickaggent {
+function Uninstall-WazuhAgent {
     Write-Host "Searching for Stick Agent…" -ForegroundColor Cyan
 
     $agent = Get-CimInstance -ClassName Win32_Product `
@@ -33,7 +34,7 @@ function stickaggent {
         try {
             $result = Invoke-CimMethod -InputObject $agent -MethodName Uninstall
             switch ($result.ReturnValue) {
-                0      { Write-Host " Stick Agent removed cleanly." -ForegroundColor Green }
+                0      { Write-Host "Stick Agent removed cleanly." -ForegroundColor Green }
                 default{ Write-Warning "Uninstall completed with MSI code $($result.ReturnValue)." }
             }
         } catch {
@@ -50,9 +51,10 @@ function stickaggent {
     }
 }
 
+# -- MAIN ----------------------------------------------------------------
 try {
-    stickaggent
+    Uninstall-WazuhAgent
     Write-Host "`n Cleanup completed successfully." -ForegroundColor Green
 } finally {
     if ($Transcript) { Stop-Transcript }
-}
+} 
