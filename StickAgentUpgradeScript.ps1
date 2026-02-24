@@ -24,29 +24,29 @@ if ($Transcript) { Start-Transcript -Path $TranscriptPath -Append }
 
 # -- FUNCTIONS -----------------------------------------------------------
 function Uninstall-WazuhAgent {
-    Write-Host "Searching for Wazuh Agent…" -ForegroundColor Cyan
+    Write-Host "Searching for Older StickAgent…" -ForegroundColor Cyan
 
     $agent = Get-CimInstance -ClassName Win32_Product `
                              -Filter "Name LIKE 'Wazuh Agent%'"
 
     if ($agent) {
-        Write-Host "Uninstalling Wazuh Agent $($agent.Version)…" -ForegroundColor Cyan
+        Write-Host "Uninstalling Older StickAgent $($agent.Version)…" -ForegroundColor Cyan
         try {
             $result = Invoke-CimMethod -InputObject $agent -MethodName Uninstall
             switch ($result.ReturnValue) {
-                0      { Write-Host "Wazuh Agent removed cleanly." -ForegroundColor Green }
+                0      { Write-Host "StickAgent removed cleanly." -ForegroundColor Green }
                 default{ Write-Warning "Uninstall completed with MSI code $($result.ReturnValue)." }
             }
         } catch {
-            Write-Warning "Failed to uninstall Wazuh Agent: $_"
+            Write-Warning "Failed to uninstall SitckAgent: $_"
         }
     } else {
-        Write-Host "Wazuh Agent not found in installed products." -ForegroundColor Yellow
+        Write-Host "StickAgent not found in installed products." -ForegroundColor Yellow
     }
 
     $leftover = 'C:\Program Files (x86)\ossec-agent'
     if (Test-Path $leftover) {
-        Write-Host "Removing leftover directory $leftover…" -ForegroundColor Cyan
+        Write-Host "Removing leftover directory" -ForegroundColor Green
         Remove-Item $leftover -Recurse -Force
     }
 }
@@ -70,7 +70,7 @@ function Install-BindPlane {
         return
     }
 
-    Write-Host "Starting silent installation..." -ForegroundColor Cyan
+    Write-Host "Starting silent installation..." -ForegroundColor Gray
 
     # Constructing arguments for msiexec
     $msiArgs = @(
@@ -96,7 +96,7 @@ function Install-BindPlane {
     } finally {
         # Clean up the temporary MSI file
         if (Test-Path $tempPath) {
-            Write-Host "Cleaning up temporary files..." -ForegroundColor Gray
+            Write-Host "Cleaning up temporary files..." -ForegroundColor Green
             Remove-Item $tempPath -Force
         }
     }
@@ -106,7 +106,7 @@ function Install-BindPlane {
 try {
     Install-BindPlane
     Uninstall-WazuhAgent
-    Write-Host "`n✅ Cleanup completed successfully." -ForegroundColor Green
+    Write-Host "`n Cleanup completed successfully." -ForegroundColor Green
 } finally {
     if ($Transcript) { Stop-Transcript }
 } 
