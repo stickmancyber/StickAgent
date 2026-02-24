@@ -30,7 +30,7 @@ function Uninstall-WazuhAgent {
                              -Filter "Name LIKE 'Wazuh Agent%'"
 
     if ($agent) {
-        Write-Host "Uninstalling Older StickAgent $($agent.Version)…" -ForegroundColor Cyan
+        Write-Host "Uninstalling Older StickAgent $($agent.Version)..." -ForegroundColor Cyan
         try {
             $result = Invoke-CimMethod -InputObject $agent -MethodName Uninstall
             switch ($result.ReturnValue) {
@@ -46,7 +46,7 @@ function Uninstall-WazuhAgent {
 
     $leftover = 'C:\Program Files (x86)\ossec-agent'
     if (Test-Path $leftover) {
-        Write-Host "Removing leftover directory" -ForegroundColor Green
+        Write-Host "Removing leftover directory $leftover..." -ForegroundColor Green
         Remove-Item $leftover -Recurse -Force
     }
 }
