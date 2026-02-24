@@ -24,7 +24,7 @@ if ($Transcript) { Start-Transcript -Path $TranscriptPath -Append }
 
 # -- FUNCTIONS -----------------------------------------------------------
 function Uninstall-WazuhAgent {
-    Write-Host "Searching for Older StickAgent…" -ForegroundColor Cyan
+    Write-Host "Searching for Older StickAgent..." -ForegroundColor Cyan
 
     $agent = Get-CimInstance -ClassName Win32_Product `
                              -Filter "Name LIKE 'Wazuh Agent%'"
